@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+// segment tree implementation
+vector<int>segTree, nums;
+   void sol(int i, int l, int r){
+            if(l==r){
+                 segTree[i]=nums[l];
+                return ;
+            }
+            int mid=(l+r)/2;
+             sol(2*i+1, l, mid);
+             sol(2*i+2, mid+1, r);
+           segTree[i]=segTree[2*i+1]+segTree[2*i+2];
+   }
+   // update original nums array then value calculate
+   void update(int i, int l, int r, int ind, int val){
+            if(l==r){
+                 segTree[i]=val;
+                 return ;
+            }
+            int mid=(l+r)/2;
+            if(ind<=mid){
+                 update(2*i+1, l, mid, ind, val);
+            }else{
+              update(2*i+2, mid+1, r, ind, val);
+            }
+            segTree[i]=segTree[2*i+1]+segTree[2*i+2];
+            
+   }
+   // finding the range sum b/w st to ed
+   int find_range(int st, int ed, int i, int l, int r){
+          if(l>ed || st>r){
+                return 0;
+          }
+          if(st<=l && ed>=r){
+                return segTree[i];
+          }
+          int mid=(l+r)/2;
+          return find_range(st, ed, 2*i+1, l, mid)+find_range(st, ed, 2*i+2, mid+1, r);
+   }
+   
+   
+int main() 
+{    int n;
+       cin>>n;
+       segTree.resize(4*n, 0);
+          for(int i=0; i<n; i++){
+               int c;
+                  cin>>c;
+                  nums.push_back(c);
+          }
+     sol(0, 0, n-1);
+        for(int i=0; i<segTree.size(); i++){
+              cout<<segTree[i]<<" ";
+        }
+        cout<<endl;
+        int ind; cin>>ind; int val; cin>>val;
+        update(0, 0, n-1, ind, val);
+        for(int i=0; i<segTree.size(); i++){
+              cout<<segTree[i]<<" ";
+        }
+        cout<<endl;
+        cout<<find_range(1,3, 0, 0, n-1);
+        
+}
