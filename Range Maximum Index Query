@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+using namespace std;
+// segment tree implementation on the basis of maximum value implementation
+vector<int>segTree, nums;
+   void sol(int i, int l, int r){
+            if(l==r){
+                 segTree[i]=l;
+                return ;
+            }
+            int mid=(l+r)/2;
+             sol(2*i+1, l, mid);
+             sol(2*i+2, mid+1, r);
+             int left=segTree[2*i+1];
+             int right=segTree[2*i+2];
+             if(nums[left]>=nums[right]){
+                 segTree[i]=left;
+             }else{
+               segTree[i]=right;
+             }
+   }
+   // finding the range sum b/w l to r maximum value index
+   int find_range(int st, int ed, int i, int l, int r){
+          if(l>ed || st>r){
+                return -1;
+          }
+          if(st<=l && ed>=r){
+                return segTree[i];
+          }
+           int mid=(l+r)/2;
+          int left=find_range(st, ed, 2*i+1, l, mid);
+          int right=find_range(st, ed, 2*i+2, mid+1, r);
+              if(left==-1) return right;
+              if(right==-1) return left;
+              if(nums[left]>=nums[right]){
+                   return left;
+              }
+              return right;
+   }
+   
+   
+int main() 
+{    int n;
+       cin>>n;
+       segTree.resize(4*n, 0);
+          for(int i=0; i<n; i++){
+               int c;
+                  cin>>c;
+                  nums.push_back(c);
+          }
+     sol(0, 0, n-1);
+        cout<<find_range(1,2, 0, 0, n-1);
+        
+}
